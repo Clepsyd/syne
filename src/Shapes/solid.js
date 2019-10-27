@@ -1,25 +1,25 @@
 class Solid {
-  constructor(scene) {
+  constructor(scene, orbitAlt, orbitAngle = 0, orbitAngleMod = 1) {
     this.scene = scene;
     this.material = new THREE.MeshBasicMaterial({
       wireframe: true
     });
+    this.orbitAlt = orbitAlt;
+    this.orbitAngle = orbitAngle;
+    this.orbitAngleMod = orbitAngleMod;
   }
 
-  changeOpacity(sizeScaler) {
-    //temporary conversion into scaler between 0-1.0
-    var sizeScalerDecimal = (sizeScaler - 1);
-
+  changeOpacity(input) {
     this.material.transparent = true;
-    this.material.opacity = sizeScalerDecimal;
-
+    this.material.opacity = input;
     return this.material.opacity;
   }
 
-  changeScale(sizeScaler) {
-    this.shape.scale.x = sizeScaler;
-    this.shape.scale.y = sizeScaler;
-    this.shape.scale.z = sizeScaler;
+
+  changeScale(sizeScalerX, sizeScalerY, sizeScalerZ) {
+    this.shape.scale.x = sizeScalerX;
+    this.shape.scale.y = sizeScalerY;
+    this.shape.scale.z = sizeScalerZ;
     return this.shape.scale
   }
 
@@ -30,6 +30,20 @@ class Solid {
     return this.shape.position
   }
 
+  orbit(object) {
+    this.shape.position.x = object.shape.position.x + this.orbitAlt * Math.cos(this.radians(this.orbitAngle));
+    //this.shape.position.y = object.shape.position.y + this.orbitAlt * Math.sin(this.radians(this.orbitAngle));
+    this.shape.position.z = object.shape.position.z + this.orbitAlt * Math.sin(this.radians(this.orbitAngle));
+
+    this.orbitAngle = this.orbitAngle + this.orbitAngleMod;
+    if (this.orbitAngle >= 360) {
+      this.orbitAngle = 0;
+    }
+  }
+
+  radians(degrees) {
+    return (degrees * Math.PI / 180)
+  }
   changeRotation(rotationX, rotationY, rotationZ) {
     this.rotateX(rotationX);
     this.rotateY(rotationY);
@@ -56,4 +70,4 @@ class Solid {
       this.shape.rotation.z -= 360
     }
   }
-}
+};
